@@ -1,0 +1,48 @@
+name: MADPrac1
+
+on: 
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout source codes
+        uses: actions/checkout@v2
+          
+      - name: Checkout Test Scripts 
+        uses: actions/checkout@v2
+        with:
+          repository: lowkh/MAD_Junit
+          path: lib
+      - name: Create Reports Directory
+        run: |
+          mkdir report1
+          mkdir report2
+          mkdir report3
+          mkdir report4
+          mkdir report5
+        
+      - name: Check files
+        run: |
+          cp lib/Question1Test.java Question1Test.java
+          cp lib/Question2Test.java Question2Test.java
+          cp lib/Question3Test.java Question3Test.java
+          cp lib/Question4Test.java Question4Test.java
+          cp lib/Question5Test.java Question5Test.java
+          ls
+          javac -cp "lib/junit-platform-console-standalone-1.7.0-all.jar" *.java
+          java -jar lib/junit-platform-console-standalone-1.7.0-all.jar -cp "." --select-class Question1Test --reports-dir='report1'
+          java -jar lib/junit-platform-console-standalone-1.7.0-all.jar -cp "." --select-class Question2Test --reports-dir='report2'
+          java -jar lib/junit-platform-console-standalone-1.7.0-all.jar -cp "." --select-class Question3Test --reports-dir='report3'
+          java -jar lib/junit-platform-console-standalone-1.7.0-all.jar -cp "." --select-class Question4Test --reports-dir='report4'
+          java -jar lib/junit-platform-console-standalone-1.7.0-all.jar -cp "." --select-class Question5Test --reports-dir='report5'
+      - name: Publish Unit Test 1 Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: report*/*.xml
